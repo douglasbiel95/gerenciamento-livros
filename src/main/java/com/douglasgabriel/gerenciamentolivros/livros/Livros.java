@@ -10,13 +10,16 @@ import javax.persistence.ManyToOne;
 
 import com.douglasgabriel.gerenciamentolivros.autor.Autor;
 import com.douglasgabriel.gerenciamentolivros.editora.Editora;
+import com.douglasgabriel.gerenciamentolivros.entidadescomuns.Auditavel;
 import com.douglasgabriel.gerenciamentolivros.usuario.Usuario;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
-public class Livros {
+@EqualsAndHashCode(callSuper = false)
+public class Livros extends Auditavel{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
