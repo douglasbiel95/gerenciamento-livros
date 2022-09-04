@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -18,7 +19,8 @@ import com.douglasgabriel.gerenciamentolivros.entidadescomuns.excecoes.EntidadeN
 public class ExceptionHandler extends ResponseEntityExceptionHandler {
 
 		
-	private static final String ERRO_NA_VALIDAÇÃO_DOS_ARGUMENTOS_INFORMADOS = "Erro na validação dos argumentos informados";
+	private static final String CORPO_JSON_MALFORMATADO = "Corpo JSON Malformatado e/ou Erro no Campo";
+	private static final String ERRO_NA_VALIDACAO_DOS_ARGUMENTOS_INFORMADOS = "Erro na validação dos argumentos informados";
 
 	
 	// Metodo herdado que lida com argumentos invalidos
@@ -36,8 +38,18 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
 		exception.getBindingResult().getGlobalErrors().forEach(errosGlobais -> listaErros.add(
 				"Objeto: " + errosGlobais.getObjectName().toUpperCase() + " " + errosGlobais.getDefaultMessage()));
 		
-		return criaResponseEntityPersonalizado(HttpStatus.BAD_REQUEST, ERRO_NA_VALIDAÇÃO_DOS_ARGUMENTOS_INFORMADOS, listaErros);
+		return criaResponseEntityPersonalizado(HttpStatus.BAD_REQUEST, ERRO_NA_VALIDACAO_DOS_ARGUMENTOS_INFORMADOS, listaErros);
 	}
+	
+	// Metodo que lida com erros com Json malformatado
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException exception,
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
+		// TODO Auto-generated method stub
+		return criaResponseEntityPersonalizado(HttpStatus.BAD_REQUEST, CORPO_JSON_MALFORMATADO, Collections.singletonList(exception.getMessage()));
+	}
+
+
 
 	// Metodo que lida com entidades nao encontradas na aplicacao
 	@org.springframework.web.bind.annotation.ExceptionHandler(EntidadeNaoEncontradaException.class)
